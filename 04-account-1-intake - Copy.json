@@ -19,13 +19,7 @@
         0
       ],
       "id": "4779cc09-7304-4f2c-bc3b-55ff8ed9fd53",
-      "name": "Gmail Trigger",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
+      "name": "Gmail Trigger"
     },
     {
       "parameters": {
@@ -131,12 +125,6 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "711372ca-43af-4a34-af4f-e8341636809d",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
-  },
   "nodeGroups": [],
-  "id": "29nIvb2cpoxFFGs1",
   "tags": []
 }
