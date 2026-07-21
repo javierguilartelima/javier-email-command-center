@@ -1,0 +1,142 @@
+{
+  "name": "4-Email command center-account 1 intake",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4779cc09-7304-4f2c-bc3b-55ff8ed9fd53",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "41454be3-4b15-4451-b72d-c470fbce6429",
+              "name": "source_account",
+              "value": "personal",
+              "type": "string"
+            },
+            {
+              "id": "0e441dbd-a08c-4d4d-915e-b0639f0fc453",
+              "name": "message_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5996579c-24ed-4819-a8f9-36f1175a39c6",
+              "name": "thread_id",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "6dcb3243-21ed-4fff-822f-5db590f542df",
+              "name": "snippet",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "527309a0-c6e4-4b8b-9668-bdb4c82981db",
+              "name": "subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "a974ce96-fbc0-4fdf-9b34-238c66c03296",
+              "name": "from",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "10697e41-e1ce-4768-b565-32bcf06e0e05",
+              "name": "to",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "e8e691bf-950a-4dbc-81d7-d63d04194512",
+              "name": "received_at",
+              "value": "={{ DateTime.fromMillis(Number($json.internalDate)).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "77451692-2d4f-43c4-9ddb-8b29e7c85415",
+              "name": "labels",
+              "value": "={{ $json.labels.map(label => label.name) }}",
+              "type": "array"
+            },
+            {
+              "id": "0cd1838a-0df7-479b-b657-c71bfa96d29b",
+              "name": "is_unread",
+              "value": "={{ $json.labels.some(label => label.name === 'UNREAD') }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2670998e-a2be-407c-83a3-2bc102df5ebe",
+              "name": "is_imbox",
+              "value": "={{ $json.labels.some(label => label.name === 'INBOX') }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e2815089-d010-471c-891a-26487fd37f23",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "711372ca-43af-4a34-af4f-e8341636809d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
+  },
+  "nodeGroups": [],
+  "id": "29nIvb2cpoxFFGs1",
+  "tags": []
+}
