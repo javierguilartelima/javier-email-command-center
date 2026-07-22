@@ -19,13 +19,7 @@
         0
       ],
       "id": "4779cc09-7304-4f2c-bc3b-55ff8ed9fd53",
-      "name": "Gmail Trigger",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
+      "name": "Gmail Trigger"
     },
     {
       "parameters": {
@@ -217,12 +211,6 @@
               "value": 0,
               "type": "number"
             },
-            {
-              "id": "71f31af0-6951-4e11-9ec1-a7c4a282dc94",
-              "name": "",
-              "value": "",
-              "type": "string"
-            }
           ]
         },
         "includeOtherFields": true,
@@ -355,15 +343,9 @@
       ],
       "id": "ee2d97aa-3858-42b1-ae00-3a592be2f2da",
       "name": "Add label to message",
-      "webhookId": "466ffef1-c426-4481-baaa-92ec82f4a911",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
-    },
-    {
+      "webhookId": "466ffef1-c426-4481-baaa-92ec82f4a911"
+      },
+      {
       "parameters": {
         "operation": "addLabels",
         "messageId": "={{ $json.message_id }}",
@@ -379,20 +361,7 @@
       ],
       "id": "368dcbea-7030-4d77-9380-8aec76921e91",
       "name": "Add label to message1",
-      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "addLabels",
-        "messageId": "={{ $json.message_id }}",
-        "labelIds": [
-          "Label_5204494716029733299"
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7"
         ]
       },
       "type": "n8n-nodes-base.gmail",
@@ -403,13 +372,7 @@
       ],
       "id": "65a0cc04-54a8-4ca8-80a4-58a12410dfcd",
       "name": "Add label to message2",
-      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7"
     },
     {
       "parameters": {
@@ -427,14 +390,7 @@
       ],
       "id": "fd3e098d-9b94-4fef-bef0-17e9fe404578",
       "name": "Add label to message3",
-      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
-    }
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7"
   ],
   "pinData": {},
   "connections": {
@@ -543,12 +499,6 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "447a306e-9619-4556-b91d-23c606bf8df2",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
-  },
   "nodeGroups": [],
-  "id": "29nIvb2cpoxFFGs1",
   "tags": []
 }
