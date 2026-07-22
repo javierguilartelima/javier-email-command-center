@@ -41,12 +41,6 @@
       "id": "620c7215-ca2e-44f7-bcd8-55170c0c8ab3",
       "name": "Get many messages",
       "webhookId": "68702db9-f3e5-4d48-a25b-e12efb9d4b0f",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "CzMpRFhEWhHgRUnS",
-          "name": "Gmail account"
-        }
-      }
     },
     {
       "parameters": {
@@ -76,12 +70,6 @@
       "id": "2632a31b-12ab-443b-9871-53289fbd91e0",
       "name": "Send a text message",
       "webhookId": "b961e833-8f29-49aa-b3e5-1d4e646382e2",
-      "credentials": {
-        "telegramApi": {
-          "id": "HJqMdgpH5aPFaYPV",
-          "name": "Telegram account"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -124,11 +112,6 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
-  },
-  "versionId": "022ee85b-30a5-4d92-8726-a62128299490",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
   },
   "nodeGroups": [],
   "id": "BUNoM5WEfpk1OcsQ",
