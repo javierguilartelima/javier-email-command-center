@@ -1,0 +1,202 @@
+{
+  "name": "05-Email command center-Review digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "id": "253eb2be-413d-40fd-8eae-3e37d6e87a53",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nif (items.length === 0) {\n  return [];\n}\n\nconst lines = items.map((item, index) => {\n  const subject =\n    item.json.Subject ||\n    item.json.subject ||\n    '(No subject)';\n\n  const from =\n    item.json.From ||\n    item.json.from ||\n    '(Unknown sender)';\n\n  const snippet =\n    item.json.snippet ||\n    '(No preview)';\n\n  return `${index + 1}. ${subject}\nFrom: ${from}\nPreview: ${snippet}`;\n});\n\nreturn [\n  {\n    json: {\n      review_count: items.length,\n      review_digest: `📋 Emails requiring review: ${items.length}\n\n${lines.join('\\n\\n')}`\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        64
+      ],
+      "id": "155e972b-deb0-42b5-9719-1a1f3fd68977",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "8884898484",
+        "text": "={{ $json.review_digest }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        64
+      ],
+      "id": "2632a31b-12ab-443b-9871-53289fbd91e0",
+      "name": "Send a text message",
+      "webhookId": "b961e833-8f29-49aa-b3e5-1d4e646382e2",
+      "credentials": {
+        "telegramApi": {
+          "id": "HJqMdgpH5aPFaYPV",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "labelIds": [
+            "Label_2454071966424262216"
+          ],
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "620c7215-ca2e-44f7-bcd8-55170c0c8ab3",
+      "name": "get reviews-account 1",
+      "webhookId": "68702db9-f3e5-4d48-a25b-e12efb9d4b0f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "labelIds": [
+            "Label_4524182108119718767"
+          ],
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        176
+      ],
+      "id": "556a560f-9b2f-44b3-b71f-13a1c852fb5d",
+      "name": "Get reviews-account 2",
+      "webhookId": "68702db9-f3e5-4d48-a25b-e12efb9d4b0f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        512,
+        64
+      ],
+      "id": "c4242a6e-2e32-465b-94ae-46e4ace5c731",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get reviews-account 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get reviews-account 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get reviews-account 1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get reviews-account 2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2244f8d8-8640-4dbe-be29-b84c07b8b499",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
+  },
+  "nodeGroups": [],
+  "id": "BUNoM5WEfpk1OcsQ",
+  "tags": []
+}
