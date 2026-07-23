@@ -1,0 +1,1186 @@
+{
+  "name": "4-Email command center-account 1 intake",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -64,
+        48
+      ],
+      "id": "4779cc09-7304-4f2c-bc3b-55ff8ed9fd53",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "41454be3-4b15-4451-b72d-c470fbce6429",
+              "name": "source_account",
+              "value": "personal",
+              "type": "string"
+            },
+            {
+              "id": "0e441dbd-a08c-4d4d-915e-b0639f0fc453",
+              "name": "message_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5996579c-24ed-4819-a8f9-36f1175a39c6",
+              "name": "thread_id",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "6dcb3243-21ed-4fff-822f-5db590f542df",
+              "name": "snippet",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "527309a0-c6e4-4b8b-9668-bdb4c82981db",
+              "name": "subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "a974ce96-fbc0-4fdf-9b34-238c66c03296",
+              "name": "from",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "10697e41-e1ce-4768-b565-32bcf06e0e05",
+              "name": "to",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "e8e691bf-950a-4dbc-81d7-d63d04194512",
+              "name": "received_at",
+              "value": "={{ DateTime.fromMillis(Number($json.internalDate)).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "77451692-2d4f-43c4-9ddb-8b29e7c85415",
+              "name": "labels",
+              "value": "={{ $json.labels.map(label => label.name) }}",
+              "type": "array"
+            },
+            {
+              "id": "0cd1838a-0df7-479b-b657-c71bfa96d29b",
+              "name": "is_unread",
+              "value": "={{ $json.labels.some(label => label.name === 'UNREAD') }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2670998e-a2be-407c-83a3-2bc102df5ebe",
+              "name": "is_imbox",
+              "value": "={{ $json.labels.some(label => label.name === 'INBOX') }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        48
+      ],
+      "id": "e2815089-d010-471c-891a-26487fd37f23",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9db4ab75-1bcb-41f1-b412-b8371942c2f8",
+                    "leftValue": "={{ (($json.subject || '') + ' ' + ($json.snippet || '')).toLowerCase() }}",
+                    "rightValue": "(verification code|security alert|sign-in|login attempt|password reset|two-factor|2fa|one-time code|otp|código de verificación|alerta de seguridad|restablecer contraseña)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "security_or_verification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6c785d41-70b1-4106-974b-b6fc474c0af4",
+                    "leftValue": "={{ (($json.subject || '') + ' ' + ($json.snippet || '')).toLowerCase() }}",
+                    "rightValue": "(internship|job opportunity|job offer|interview|scholarship|fellowship|application deadline|client inquiry|project collaboration|purchase inquiry|commission inquiry|hiring|recruiter|práctica profesional|pasantía|oportunidad de trabajo|oferta de empleo|entrevista|beca|fecha límite|cliente|colaboración)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "opportunity_or_action_required"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ (($json.subject || '') + ' ' + ($json.snippet || '')).toLowerCase() }}",
+                    "rightValue": "(newsletter|unsubscribe|sale|discount|promotion|promo|offer|deal|shop now|limited time)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "4758d6ee-237d-4169-bef4-79c5699330ce"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "promotion_or_newsletter"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "63d2558a-04c6-4e41-9b88-611d852d4bcc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7646dd1c-1afe-4b41-b247-4cac8dc90a78",
+              "name": "route",
+              "value": "needs_further_classification",
+              "type": "string"
+            },
+            {
+              "id": "07f65611-6685-4919-a23a-d27757ac448e",
+              "name": "rule_confidence",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "71f31af0-6951-4e11-9ec1-a7c4a282dc94",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        272
+      ],
+      "id": "fc3b644b-2bfc-4696-9015-93d86e9e98b0",
+      "name": "Needs further classification"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2e50a47-b827-4924-b51a-710f951b083b",
+              "name": "route",
+              "value": "promotion_or_newsletter",
+              "type": "string"
+            },
+            {
+              "id": "f837735b-60db-4d0f-a0eb-f248b07b5b23",
+              "name": "rule_confidence",
+              "value": 0.9,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -544
+      ],
+      "id": "ccdb3e7d-01c5-4918-985e-a0377615a2a5",
+      "name": "Mark as promotion"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "34552cd6-aa4e-40ef-8dee-9db3376a3b86",
+              "name": "route",
+              "value": "security_or_verification",
+              "type": "string"
+            },
+            {
+              "id": "d6bd5ed1-d117-49d2-b628-7826e60ec6f4",
+              "name": "rule_confidence",
+              "value": 0.95,
+              "type": "number"
+            },
+            {
+              "id": "6061d613-ec53-4d8f-8033-7d2e8f6c9e47",
+              "name": "priority",
+              "value": "P0",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        -208
+      ],
+      "id": "7a6f9c86-bf24-4e3b-a204-638fbffc0bc1",
+      "name": "Mark as security"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7cd9cf17-7e33-45db-a7a3-10f1d058c9e9",
+              "name": "route",
+              "value": "opportunity_or_action_required",
+              "type": "string"
+            },
+            {
+              "id": "3f4aaa99-903a-435b-a1cc-9567a4546243",
+              "name": "rule_confidence",
+              "value": 0.85,
+              "type": "number"
+            },
+            {
+              "id": "1964e913-5aed-4e41-ac0f-ccf8c0ecb300",
+              "name": "priority",
+              "value": "P1",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        560
+      ],
+      "id": "649eff01-714b-40e5-b794-738f1f8148e0",
+      "name": "Mark as opportunity"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_7185682280156607572"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        640
+      ],
+      "id": "ee2d97aa-3858-42b1-ae00-3a592be2f2da",
+      "name": "Add label to message",
+      "webhookId": "466ffef1-c426-4481-baaa-92ec82f4a911",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_5872333501302557277"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        -304
+      ],
+      "id": "368dcbea-7030-4d77-9380-8aec76921e91",
+      "name": "Add label to message1",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_5204494716029733299"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        -736
+      ],
+      "id": "65a0cc04-54a8-4ca8-80a4-58a12410dfcd",
+      "name": "Add label to message2",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_2454071966424262216"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        192
+      ],
+      "id": "fd3e098d-9b94-4fef-bef0-17e9fe404578",
+      "name": "Add label to message3",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CzMpRFhEWhHgRUnS",
+          "name": "gmail personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8884898484",
+        "text": "=🚨 New opportunity detected  Subject: {{ $json.subject }} From: {{ $json.from }} Priority: {{ $json.priority }} Received: {{ $json.received_at }}  Preview: {{ $json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        880
+      ],
+      "id": "86fcb2ae-fa1a-4a3f-b3c2-d20bbbc30c33",
+      "name": "Send a text message",
+      "webhookId": "6b2551df-bced-4a74-bee2-4606c25fce10",
+      "credentials": {
+        "telegramApi": {
+          "id": "HJqMdgpH5aPFaYPV",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8884898484",
+        "text": "=🔐 Security alert detected\n\nSubject: {{ $json.subject }}\nFrom: {{ $json.from }}\nPriority: {{ $json.priority }}\nReceived: {{ $json.received_at }}\n\nPreview:\n{{ $json.snippet }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "2398c67f-44c5-4d53-9821-1f8466c8e89c",
+      "name": "Send a text message2",
+      "webhookId": "6b2551df-bced-4a74-bee2-4606c25fce10",
+      "credentials": {
+        "telegramApi": {
+          "id": "HJqMdgpH5aPFaYPV",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        -112
+      ],
+      "id": "56071ea1-0ac9-48ea-ad20-00cce961d532",
+      "name": "Gmail trigger 2 account",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "41454be3-4b15-4451-b72d-c470fbce6429",
+              "name": "source_account",
+              "value": "2do_pepito",
+              "type": "string"
+            },
+            {
+              "id": "0e441dbd-a08c-4d4d-915e-b0639f0fc453",
+              "name": "message_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5996579c-24ed-4819-a8f9-36f1175a39c6",
+              "name": "thread_id",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "6dcb3243-21ed-4fff-822f-5db590f542df",
+              "name": "snippet",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "527309a0-c6e4-4b8b-9668-bdb4c82981db",
+              "name": "subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "a974ce96-fbc0-4fdf-9b34-238c66c03296",
+              "name": "from",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "10697e41-e1ce-4768-b565-32bcf06e0e05",
+              "name": "to",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "e8e691bf-950a-4dbc-81d7-d63d04194512",
+              "name": "received_at",
+              "value": "={{ DateTime.fromMillis(Number($json.internalDate)).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "77451692-2d4f-43c4-9ddb-8b29e7c85415",
+              "name": "labels",
+              "value": "={{ $json.labels.map(label => label.name) }}",
+              "type": "array"
+            },
+            {
+              "id": "0cd1838a-0df7-479b-b657-c71bfa96d29b",
+              "name": "is_unread",
+              "value": "={{ $json.labels.some(label => label.name === 'UNREAD') }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2670998e-a2be-407c-83a3-2bc102df5ebe",
+              "name": "is_imbox",
+              "value": "={{ $json.labels.some(label => label.name === 'INBOX') }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "6c7e0412-2e35-4ec7-8d42-27421708ddf7",
+      "name": "edit fields 2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "personal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c07c3911-99b1-4d0e-9c65-0e8f9cbd6309"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a74126f3-0061-42f2-826c-158cd9b291b4",
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "2do_pepito",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        -240
+      ],
+      "id": "1e20af74-3393-4d8c-b628-5562ed0d035b",
+      "name": "route security by account"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_8582918523812295890"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        -96
+      ],
+      "id": "2877c168-b2e1-48e9-81ed-9792d5646564",
+      "name": "add AI/security-account 2",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_2891731248455151721"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        816
+      ],
+      "id": "c9f1cca2-5a63-41e4-8a9c-25af51fd5984",
+      "name": "Add label to message4",
+      "webhookId": "466ffef1-c426-4481-baaa-92ec82f4a911",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "personal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c07c3911-99b1-4d0e-9c65-0e8f9cbd6309"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a74126f3-0061-42f2-826c-158cd9b291b4",
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "2do_pepito",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        656
+      ],
+      "id": "3f96d58a-ca0f-4a19-968f-ae76c41f7e19",
+      "name": "route opportunity by account"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "personal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c07c3911-99b1-4d0e-9c65-0e8f9cbd6309"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a74126f3-0061-42f2-826c-158cd9b291b4",
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "2do_pepito",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        -576
+      ],
+      "id": "3f742194-ac0f-469e-8d9b-36d375eb65e9",
+      "name": "route promotion by account"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_4199889392332774782"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        -560
+      ],
+      "id": "59d8f88f-3076-4c6d-bedd-d1623f5043ab",
+      "name": "Add label to message5",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "personal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c07c3911-99b1-4d0e-9c65-0e8f9cbd6309"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a74126f3-0061-42f2-826c-158cd9b291b4",
+                    "leftValue": "={{ $json.source_account }}",
+                    "rightValue": "2do_pepito",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account_2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        288
+      ],
+      "id": "d5bc7385-d1a4-4e6c-b255-89e0d60def0b",
+      "name": "Route review by account"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.message_id }}",
+        "labelIds": [
+          "Label_4524182108119718767"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        352
+      ],
+      "id": "14ea775e-5ff0-46bc-95a7-79a360222097",
+      "name": "Add label to message6",
+      "webhookId": "d2af21c8-30fc-4a07-954d-d15f136875d7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pF54e6KgCyoCiWR8",
+          "name": "gmail 2do pepito"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Mark as security",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as promotion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs further classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as opportunity": {
+      "main": [
+        [
+          {
+            "node": "route opportunity by account",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as security": {
+      "main": [
+        [
+          {
+            "node": "route security by account",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs further classification": {
+      "main": [
+        [
+          {
+            "node": "Route review by account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as promotion": {
+      "main": [
+        [
+          {
+            "node": "route promotion by account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        []
+      ]
+    },
+    "Add label to message1": {
+      "main": [
+        []
+      ]
+    },
+    "Add label to message2": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail trigger 2 account": {
+      "main": [
+        [
+          {
+            "node": "edit fields 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "edit fields 2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route security by account": {
+      "main": [
+        [
+          {
+            "node": "Add label to message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add AI/security-account 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route opportunity by account": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route promotion by account": {
+      "main": [
+        [
+          {
+            "node": "Add label to message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route review by account": {
+      "main": [
+        [
+          {
+            "node": "Add label to message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f1bafdcf-3476-4c97-933a-e394337a45a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32adcff31bcbbd2a5ec586803fad0db796ea876ebf42d071135b0c907875ade9"
+  },
+  "nodeGroups": [],
+  "id": "29nIvb2cpoxFFGs1",
+  "tags": []
+}
