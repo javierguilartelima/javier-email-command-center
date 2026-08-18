@@ -4,7 +4,9 @@ A multi-account email triage and opportunity management system built with n8n, G
 
 ## Project status
 
-Early development.
+Functional prototype under active development.
+
+The current version includes multi-account email intake, rule-based routing, AI-assisted classification, Gmail labeling, and scheduled review digests. The system is being iteratively expanded and refined toward a reliable long-term email command center.
 
 ## Problem
 
@@ -29,8 +31,7 @@ Build one long-term system that:
 
 ## Initial scope
 
-The first usable version will include:
-
+The current prototype includes:
 1. Two connected email accounts.
 2. Rule-based filtering for obvious messages.
 3. AI classification only for ambiguous messages.
@@ -39,7 +40,7 @@ The first usable version will include:
 6. A review queue for uncertain classifications.
 7. Basic logging and error handling.
 
-## Planned categories
+## Message categories
 
 - Urgent and actionable
 - Opportunity
@@ -64,16 +65,14 @@ The first usable version will include:
 - n8n
 - Gmail
 - Google Sheets
-- Telegram or another notification channel
+- Telegram notifications
 - Rule-based filtering
 - AI-assisted classification
 - GitHub for documentation and version control
 
 ## Repository structure
-
-```text
-docs/          Project requirements, architecture, decisions, and tests
+docs/          Project requirements, architecture, decisions, and documentation
 workflows/     Sanitized n8n workflow exports
-examples/      Anonymized sample inputs and outputs
-screenshots/   Clean portfolio screenshots
-diagrams/      Architecture and workflow diagrams
+screenshots/   Sanitized project and workflow screenshots
+README.md      Project overview and documentation
+.gitignore     Files and sensitive data excluded from version control
